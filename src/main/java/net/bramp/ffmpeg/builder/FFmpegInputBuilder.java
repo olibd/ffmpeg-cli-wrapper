@@ -26,19 +26,20 @@ public class FFmpegInputBuilder {
     Long startOffset; // in millis
     final List<String> inputs = new ArrayList<>();
     final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
+    boolean read_at_native_frame_rate = false;
 
     final List<String> extra_args = new ArrayList<>();
 
     protected FFmpegInputBuilder(FFmpegBuilder parent, String inputFormat, String inputFile) {
         this.parent = checkNotNull(parent);
-        format = checkNotNull(inputFormat);
-        addInput(inputFile);
+        format = inputFormat;
+        addInput(checkNotNull(inputFile));
     }
 
     protected FFmpegInputBuilder(FFmpegBuilder parent, String inputFormat, FFmpegProbeResult inputFile) {
         this.parent = checkNotNull(parent);
-        format = checkNotNull(inputFormat);
-        addInput(inputFile);
+        format = inputFormat;
+        addInput(checkNotNull(inputFile));
     }
 
     public FFmpegInputBuilder addInput(FFmpegProbeResult result) {
@@ -51,6 +52,11 @@ public class FFmpegInputBuilder {
     public FFmpegInputBuilder addInput(String filename) {
         checkNotNull(filename);
         inputs.add(filename);
+        return this;
+    }
+
+    public FFmpegInputBuilder readAtNativeFrameRate() {
+        this.read_at_native_frame_rate = true;
         return this;
     }
 
@@ -121,6 +127,10 @@ public class FFmpegInputBuilder {
 
         if (format != null) {
             args.add("-f", format);
+        }
+
+        if (read_at_native_frame_rate) {
+            args.add("-re");
         }
 
         args.addAll(extra_args);
