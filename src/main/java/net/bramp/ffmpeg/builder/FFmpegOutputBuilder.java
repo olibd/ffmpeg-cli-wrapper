@@ -226,8 +226,9 @@ public class FFmpegOutputBuilder extends AbstractFFmpegStreamBuilder<FFmpegOutpu
     if (targetSize > 0) {
       checkState(parent.inputs.size() == 1, "Target size does not support multiple inputs");
 
-      String firstInput = parent.inputs.iterator().next();
-      FFmpegProbeResult input = parent.inputProbes.get(firstInput);
+      FFmpegInputBuilder firstInput = parent.inputs.iterator().next();
+      String firstInputString = firstInput.inputs.iterator().next();
+      FFmpegProbeResult input = firstInput.inputProbes.get(firstInputString);
 
       checkState(input != null, "Target size must be used with setInput(FFmpegProbeResult)");
 
