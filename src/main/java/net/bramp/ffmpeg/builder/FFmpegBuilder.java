@@ -63,17 +63,13 @@ public class FFmpegBuilder {
   URI progress;
   String user_agent;
 
-  // Input settings
-  String format;
-  Long startOffset; // in millis
-  boolean read_at_native_frame_rate = false;
-  final List<String> inputs = new ArrayList<>();
-  final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
-
-  final List<String> extra_args = new ArrayList<>();
+  // inputs
+  final List<FFmpegInputBuilder> inputs = new ArrayList<>();
 
   // Output
   final List<FFmpegOutputBuilder> outputs = new ArrayList<>();
+
+  final List<String> extra_args = new ArrayList<>();
 
   public FFmpegBuilder overrideOutputFiles(boolean override) {
     this.override = override;
@@ -110,53 +106,6 @@ public class FFmpegBuilder {
     return this;
   }
 
-  public FFmpegBuilder readAtNativeFrameRate() {
-    this.read_at_native_frame_rate = true;
-    return this;
-  }
-
-  public FFmpegBuilder addInput(FFmpegProbeResult result) {
-    checkNotNull(result);
-    String filename = checkNotNull(result.format).filename;
-    inputProbes.put(filename, result);
-    return addInput(filename);
-  }
-
-  public FFmpegBuilder addInput(String filename) {
-    checkNotNull(filename);
-    inputs.add(filename);
-    return this;
-  }
-
-  protected void clearInputs() {
-    inputs.clear();
-    inputProbes.clear();
-  }
-
-  public FFmpegBuilder setInput(FFmpegProbeResult result) {
-    clearInputs();
-    return addInput(result);
-  }
-
-  public FFmpegBuilder setInput(String filename) {
-    clearInputs();
-    return addInput(filename);
-  }
-
-  public FFmpegBuilder setFormat(String format) {
-    this.format = checkNotNull(format);
-    return this;
-  }
-
-  public FFmpegBuilder setStartOffset(long duration, TimeUnit units) {
-    checkNotNull(duration);
-    checkNotNull(units);
-
-    this.startOffset = units.toMillis(duration);
-
-    return this;
-  }
-
   public FFmpegBuilder addProgress(URI uri) {
     this.progress = checkNotNull(uri);
     return this;
@@ -176,6 +125,32 @@ public class FFmpegBuilder {
       extra_args.add(checkNotNull(value));
     }
     return this;
+  }
+
+  /**
+   * Adds new input file.
+   *
+   * @param inputFormat input format
+   * @param inputFile input file path/name
+   * @return A new {@link FFmpegInputBuilder}
+   */
+  public FFmpegInputBuilder addInput(String inputFormat, String inputFile) {
+    FFmpegInputBuilder input = new FFmpegInputBuilder(this, inputFormat, inputFile);
+    inputs.add(input);
+    return input;
+  }
+
+  /**
+   * Adds new input file.
+   *
+   * @param inputFormat input format
+   * @param inputFile input file path/name
+   * @return A new {@link FFmpegInputBuilder}
+   */
+  public FFmpegInputBuilder addInput(String inputFormat, FFmpegProbeResult inputFile) {
+    FFmpegInputBuilder input = new FFmpegInputBuilder(this, inputFormat, inputFile);
+    inputs.add(input);
+    return input;
   }
 
   /**
@@ -245,27 +220,12 @@ public class FFmpegBuilder {
       args.add("-user_agent", user_agent);
     }
 
-    if (startOffset != null) {
-      args.add("-ss", FFmpegUtils.toTimecode(startOffset, TimeUnit.MILLISECONDS));
-    }
-
-    if (format != null) {
-      args.add("-f", format);
-    }
-
-    if (read_at_native_frame_rate) {
-      args.add("-re");
-    }
-
     if (progress != null) {
       args.add("-progress", progress.toString());
     }
 
     args.addAll(extra_args);
 
-    for (String input : inputs) {
-      args.add("-i", input);
-    }
 
     if (pass > 0) {
       args.add("-pass", Integer.toString(pass));
@@ -273,6 +233,10 @@ public class FFmpegBuilder {
       if (pass_prefix != null) {
         args.add("-passlogfile", pass_directory + pass_prefix);
       }
+    }
+
+    for (FFmpegInputBuilder input : this.inputs) {
+      args.addAll(input.build());
     }
 
     for (FFmpegOutputBuilder output : this.outputs) {
