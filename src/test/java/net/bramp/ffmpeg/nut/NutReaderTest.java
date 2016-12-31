@@ -39,7 +39,7 @@ public class NutReaderTest {
 
     List<String> args =
         new FFmpegBuilder()
-            .setInput(Samples.big_buck_bunny_720p_1mb)
+            .addInput(null, Samples.big_buck_bunny_720p_1mb).done()
             .addStdoutOutput()
             .setFormat("nut")
             .setVideoCodec("rawvideo")

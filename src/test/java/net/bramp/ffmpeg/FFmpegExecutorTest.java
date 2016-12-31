@@ -85,7 +85,8 @@ public class FFmpegExecutorTest {
             .setVerbosity(FFmpegBuilder.Verbosity.DEBUG)
             .setUserAgent(
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36")
-            .setInput(getWebserverRoot() + Samples.base_big_buck_bunny_720p_1mb)
+                .addInput(null, getWebserverRoot() + Samples.base_big_buck_bunny_720p_1mb)
+                .done()
             .addExtraArgs("-probesize", "1000000")
             //.setStartOffset(1500, TimeUnit.MILLISECONDS)
             .overrideOutputFiles(true)
@@ -121,8 +122,7 @@ public class FFmpegExecutorTest {
     assertFalse(in.hasError());
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
-            .setInput(in)
+        new FFmpegBuilder().addInput(null, in).done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -143,8 +143,7 @@ public class FFmpegExecutorTest {
   public void testFilter() throws InterruptedException, ExecutionException, IOException {
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
-            .setInput(Samples.big_buck_bunny_720p_1mb)
+        new FFmpegBuilder().addInput(null, Samples.big_buck_bunny_720p_1mb).done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -164,7 +163,7 @@ public class FFmpegExecutorTest {
 
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .setInput(Samples.big_buck_bunny_720p_1mb)
+            .addInput(null, Samples.big_buck_bunny_720p_1mb).done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .setFormat("mp4")
@@ -192,7 +191,7 @@ public class FFmpegExecutorTest {
 
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .setInput(Samples.big_buck_bunny_720p_1mb)
+                .addInput(null, Samples.big_buck_bunny_720p_1mb).done()
             .addStdoutOutput()
             .setFormat("s8")
             .setAudioChannels(1)
@@ -220,9 +219,9 @@ public class FFmpegExecutorTest {
     assertFalse(in.hasError());
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
+        new FFmpegBuilder().addInput(null, Samples.big_buck_bunny_720p_1mb)
             .readAtNativeFrameRate() // Slows the test down
-            .setInput(in)
+                .done()
             .overrideOutputFiles(true)
             .addOutput(Samples.output_mp4)
             .done();

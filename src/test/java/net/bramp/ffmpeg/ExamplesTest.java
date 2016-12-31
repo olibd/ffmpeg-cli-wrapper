@@ -42,10 +42,7 @@ public class ExamplesTest {
     FFmpegBuilder builder =
         new FFmpegBuilder()
             .addExtraArgs("-rtbufsize", "1500M")
-            .addExtraArgs("-re")
-            .setFormat("dshow")
-            .setInput(
-                "video=\"Microsoft Camera Rear\":audio=\"Microphone Array (Realtek High Definition Audio(SST))\"")
+            .addExtraArgs("-re").addInput("dshow", "video=\"Microsoft Camera Rear\":audio=\"Microphone Array (Realtek High Definition Audio(SST))\"").done()
             .addOutput("rtmp://a.rtmp.youtube.com/live2/1234-5678")
             .setFormat("flv")
             .addExtraArgs("-bufsize", "4000k")
@@ -83,8 +80,7 @@ public class ExamplesTest {
   public void testExample2() throws IOException {
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
-            .setInput("input.mkv")
+        new FFmpegBuilder().addInput(null, "input.mkv").done()
             .addOutput("output.ogv")
             .setVideoCodec("libtheora")
             .addExtraArgs("-qscale:v", "7")
@@ -109,8 +105,7 @@ public class ExamplesTest {
   public void testExample3() throws IOException {
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
-            .setInput("sample.avi")
+        new FFmpegBuilder().addInput(null, "sample.avi").done()
             .addOutput("thumbnail.png")
             .setFrames(1)
             .setVideoFilter("select='gte(n\\,10)',scale=200:-1")
@@ -131,8 +126,7 @@ public class ExamplesTest {
   public void testExample4() throws IOException {
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
-            .setInput("rtsp://192.168.1.1:1234/")
+        new FFmpegBuilder().addInput(null, "rtsp://192.168.1.1:1234/").done()
             .addOutput("img%03d.jpg")
             .setFormat("image2")
             .done();
@@ -154,7 +148,7 @@ public class ExamplesTest {
     FFmpeg ffmpeg = new FFmpeg("/path/to/ffmpeg", func);
     FFprobe ffprobe = new FFprobe("/path/to/ffprobe", func);
 
-    FFmpegBuilder builder = new FFmpegBuilder().setInput("input").addOutput("output.mp4").done();
+    FFmpegBuilder builder = new FFmpegBuilder().addInput(null, "input").done().addOutput("output.mp4").done();
 
     FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
 

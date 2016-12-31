@@ -43,9 +43,8 @@ public class ReadmeTest {
     FFmpegProbeResult in = ffprobe.probe(inFilename);
 
     FFmpegBuilder builder =
-        new FFmpegBuilder()
-            .setInput(inFilename) // Filename, or a FFmpegProbeResult
-            .setInput(in)
+        new FFmpegBuilder().addInput(null, inFilename)// Filename, or a FFmpegProbeResult
+            .setInput(in).done()
             .overrideOutputFiles(true) // Override the output if it exists
             .addOutput("output.mp4") // Filename for the destination
             .setFormat("mp4") // Format is inferred from filename, or can be set
@@ -109,7 +108,7 @@ public class ReadmeTest {
 
     FFmpegBuilder builder =
         new FFmpegBuilder()
-            .setInput(in) // Or filename
+            .addInput(null, in).done() // Or filename
             .addOutput("output.mp4")
             .done();
 
