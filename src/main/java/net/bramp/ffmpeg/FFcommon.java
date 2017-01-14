@@ -14,6 +14,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -22,6 +24,10 @@ abstract class FFcommon {
 
   /** Path to the binary (e.g. /usr/bin/ffmpeg) */
   final String path;
+
+  /** Access to the process */
+  private BufferedWriter processIn;
+  private Process ffmpegProcess;
 
   /** Function to run FFmpeg. We define it like this so we can swap it out (during testing) */
   final ProcessFunction runFunc;
@@ -53,6 +59,18 @@ abstract class FFcommon {
     } catch (TimeoutException e) {
       throw new IOException("Timed out waiting for " + path + " to finish.");
     }
+  }
+
+  private BufferedWriter wrapOutWriter(Process p) {
+    return new BufferedWriter (new OutputStreamWriter(p.getOutputStream()));
+  }
+
+  public BufferedWriter getProcessIn() {
+    return processIn;
+  }
+
+  public void terminateProcess(){
+    ffmpegProcess.destroy();
   }
 
   /**
@@ -105,6 +123,8 @@ abstract class FFcommon {
     try {
       // TODO Move the copy onto a thread, so that FFmpegProgressListener can be on this thread.
 
+      processIn = wrapOutWriter(p);
+      ffmpegProcess = p;
       // Now block reading ffmpeg's stdout. We are effectively throwing away the output.
       CharStreams.copy(wrapInReader(p), System.out); // TODO Should I be outputting to stdout?
 
