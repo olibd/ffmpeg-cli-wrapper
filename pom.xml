@@ -16,7 +16,7 @@
         <groupId>groupId</groupId>
         <artifactId>Camera_Subsystem</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../../../../</relativePath>
+        <relativePath>../../../../pom.xml</relativePath>
     </parent>
 
     <scm>
