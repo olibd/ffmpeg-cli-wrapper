@@ -24,7 +24,7 @@ public class FFmpegInputBuilder {
     // Input settings
     String format;
     Long startOffset; // in millis
-    Long inputTimeStampOffset; //in seconds
+    Double inputTimeStampOffset; //in seconds
     final List<String> inputs = new ArrayList<>();
     final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
     boolean read_at_native_frame_rate = false;
@@ -92,7 +92,7 @@ public class FFmpegInputBuilder {
         return this;
     }
 
-    public FFmpegInputBuilder setInputTimeStampOffset(long seconds) {
+    public FFmpegInputBuilder setInputTimeStampOffset(double seconds) {
         checkNotNull(seconds);
 
         this.inputTimeStampOffset = seconds;
