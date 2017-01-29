@@ -24,7 +24,7 @@ public class FFmpegInputBuilder {
     // Input settings
     String format;
     Long startOffset; // in millis
-    Double inputTimeStampOffset; //in seconds
+    Double inputTimeStampOffset; //in seconds (in double)
     final List<String> inputs = new ArrayList<>();
     final Map<String, FFmpegProbeResult> inputProbes = new TreeMap<>();
     boolean read_at_native_frame_rate = false;
