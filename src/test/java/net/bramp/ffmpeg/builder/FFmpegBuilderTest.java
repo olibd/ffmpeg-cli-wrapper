@@ -436,4 +436,26 @@ public class FFmpegBuilderTest {
             "-y", "-v", "error", "-i", "input", "-preset", "a", "-fpre", "b", "-vpre", "c", "-apre",
             "d", "-spre", "e", "output"));
   }
+
+  @Test
+  public void testAudioOffsetInput() {
+      List<String> args =
+              new FFmpegBuilder()
+                      .addInput(null, "input")
+                      .setInputTimeStampOffset(2.0).done()
+                      .addOutput("output")
+                      .setPreset("a")
+                      .setPresetFilename("b")
+                      .setVideoPreset("c")
+                      .setAudioPreset("d")
+                      .setSubtitlePreset("e")
+                      .done()
+                      .build();
+
+      assertEquals(
+              args,
+              ImmutableList.of(
+                      "-y", "-v", "error", "-itsoffset", "2.0", "-i", "input", "-preset", "a", "-fpre", "b", "-vpre", "c", "-apre",
+                      "d", "-spre", "e", "output"));
+  }
 }
